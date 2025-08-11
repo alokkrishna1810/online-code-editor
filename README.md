@@ -31,7 +31,7 @@ DevPad is a collaborative cloud editor that allows users to write, execute, save
 
 ## Getting Started
 
-1. Clone the repository: `git clone https://github.com/your-username/devpad.git`
+1. Clone the repository: `git clone https://github.com/alokkrishna1810/online-code-editor.git`
 2. Install dependencies: `npm install`
 3. Start the development server: `npm start`
 
@@ -59,4 +59,4 @@ Contributions are welcome! Please submit a pull request with a clear description
 
 ## License
 
-DevPad is licensed under the MIT License. See [LICENSE](LICENSE) for details.
+Let's see...
