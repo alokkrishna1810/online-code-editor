@@ -1,0 +1,20 @@
+# Multi-stage Dockerfile for secure code execution
+FROM alpine:latest
+
+# Install security tools
+RUN apk add --no-cache \
+    dumb-init \
+    su-exec
+
+# Create non-root user
+RUN adduser -D -s /bin/sh runner
+
+# Set up working directory
+WORKDIR /app
+RUN chown runner:runner /app
+
+# Use dumb-init as entrypoint for proper signal handling
+ENTRYPOINT ["dumb-init", "--"]
+
+# Switch to non-root user
+USER runner
