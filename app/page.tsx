@@ -1,9 +1,13 @@
-export default function HomePage() {
+"use client";
+
+import Header from "@/components/header/header";
+
+export default function Home() {
   return (
     <div>
-      <div>Header</div>
+      <Header />
       <div>Hero Section</div>
       <div>Footer</div>
     </div>
-  )
+  );
 }

@@ -1,0 +1,29 @@
+import { Button } from "../ui/button";
+import { Code2 } from "lucide-react";
+import Link from "next/link";
+
+export default function Header() {
+  return (
+    <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+        <div className="flex items-center space-x-2">
+          <Code2 className="h-8 w-8 text-primary" />
+
+          <span className="text-2xl font-bold font-space-grotesk">
+            Code Collab
+          </span>
+        </div>
+
+        <div className="flex items-center space-x-4">
+          <Link href="/auth">
+            <Button variant="ghost">Sign in</Button>
+          </Link>
+
+          <Link href="/dashboard">
+            <Button>Get Started</Button>
+          </Link>
+        </div>
+      </div>
+    </header>
+  );
+}
