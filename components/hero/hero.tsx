@@ -26,13 +26,15 @@ export default function Hero() {
             </Button>
           </Link>
 
-          <Button
-            size="lg"
-            variant="outline"
-            className="text-lg px-8 bg-transparent"
-          >
-            View Demo
-          </Button>
+          <Link href="/editor">
+            <Button
+              size="lg"
+              variant="outline"
+              className="text-lg px-8 bg-transparent"
+            >
+              View Demo
+            </Button>
+          </Link>
         </div>
       </div>
 
