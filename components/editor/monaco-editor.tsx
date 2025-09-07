@@ -52,6 +52,8 @@ export function MonacoEditor({
       parameterHints: {
         enabled: true,
       },
+      tabSize: 2,
+      rulers: [],
     };
 
     switch (lang) {
@@ -223,6 +225,7 @@ export function MonacoEditor({
       monacoRef.current.updateOptions({
         tabSize: config.tabSize,
         insertSpaces: config.insertSpaces,
+        rulers: config.rulers,
       });
     }
   }, [language]);
