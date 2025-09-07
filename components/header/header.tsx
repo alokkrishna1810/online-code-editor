@@ -3,6 +3,7 @@
 import { Button } from "../ui/button";
 import { Code2 } from "lucide-react";
 import Link from "next/link";
+import { ThemeToggle } from "../theme/theme-toggle";
 
 export default function Header() {
   return (
@@ -11,17 +12,19 @@ export default function Header() {
         <div className="flex items-center space-x-2">
           <Code2 className="h-8 w-8 text-primary" />
 
-          <span className="text-2xl font-bold font-space-grotesk">
+          <span className="text-xl md:text-2xl font-bold font-space-grotesk">
             CodeCollab
           </span>
         </div>
 
         <div className="flex items-center space-x-4">
+          <ThemeToggle />
+
           <Link href="/auth">
             <Button variant="ghost">Sign in</Button>
           </Link>
 
-          <Link href="/dashboard">
+          <Link href="/dashboard" target="_blank">
             <Button>Get Started</Button>
           </Link>
         </div>

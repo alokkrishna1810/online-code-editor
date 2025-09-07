@@ -78,31 +78,59 @@ export function CreateProjectDialog({
 
     setIsLoading(true);
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("Please log in first");
+        return;
+      }
 
-    const newProject = {
-      id: Date.now().toString(),
-      name: formData.name,
-      description: formData.description,
-      lastModified: "Just now",
-      collaborators: 1,
-      isPublic: formData.isPublic,
-      language: formData.language,
-    };
+      const response = await fetch("/api/projects", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          description: formData.description,
+          template: formData.template,
+        }),
+      });
 
-    onCreateProject(newProject);
-    setIsLoading(false);
-    onOpenChange(false);
+      if (response.ok) {
+        const data = await response.json();
+        const newProject = {
+          id: data.project._id,
+          name: data.project.name,
+          description: data.project.description,
+          lastModified: "Just now",
+          collaborators: 1,
+          isPublic: data.project.isPublic,
+          language: data.project.files[0]?.language || "html",
+        };
 
-    // Reset form
-    setFormData({
-      name: "",
-      description: "",
-      language: "html",
-      isPublic: false,
-      template: "blank",
-    });
+        onCreateProject(newProject);
+        onOpenChange(false);
+
+        // Reset form
+        setFormData({
+          name: "",
+          description: "",
+          language: "html",
+          isPublic: false,
+          template: "blank",
+        });
+      } else {
+        const error = await response.json();
+        alert(error.error || "Failed to create project");
+      }
+    } catch (error) {
+      console.error("Create project error:", error);
+      alert("An error occurred while creating the project");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

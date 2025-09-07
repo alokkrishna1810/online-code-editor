@@ -6,21 +6,21 @@ import { Users, Zap, Shield } from "lucide-react";
 
 export default function Hero() {
   return (
-    <main className="container mx-auto px-4 py-16">
+    <main className="container mx-auto px-4 py-12 md:py-16">
       <div className="text-center max-w-4xl mx-auto">
-        <h1 className="text-5xl md:text-6xl font-bold font-space-grotesk mb-6 bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
+        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold font-space-grotesk mb-6 bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
           Code Together,
           <br />
           Create Better
         </h1>
 
-        <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
+        <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
           Professional online code editor with real-time collaboration. Write
           HTML, CSS, and JavaScript with your team, anywhere in the world.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Link href="/dashboard">
+          <Link href="/dashboard" target="_blank">
             <Button size="lg" className="text-lg px-8">
               Start Coding Now
             </Button>
@@ -37,7 +37,7 @@ export default function Hero() {
       </div>
 
       {/* Features */}
-      <div className="mt-24 grid md:grid-cols-3 gap-8">
+      <div className="mt-24 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
         <div className="text-center p-6">
           <div className="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
             <Users className="h-8 w-8 text-primary" />

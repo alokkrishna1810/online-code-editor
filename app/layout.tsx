@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Geist, Manrope } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme/theme-provider";
+import { LiveblocksProviderWrapper } from "@/components/liveblocks/liveblocks-provider";
 
 const geist = Geist({
   subsets: ["latin"],
@@ -38,7 +39,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange={false}
         >
-          {children}
+          <LiveblocksProviderWrapper>{children}</LiveblocksProviderWrapper>
         </ThemeProvider>
       </body>
     </html>
