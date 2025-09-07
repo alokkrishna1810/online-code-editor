@@ -4,74 +4,116 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
+  /* Updated color palette to match design brief with cyan primary and amber accent */
   --background: #ffffff;
-  --foreground: #1f2937;
-  --card: #f8fafc;
-  --card-foreground: #1f2937;
+  --foreground: #475569;
+  --card: #ecfeff;
+  --card-foreground: #475569;
   --popover: #ffffff;
-  --popover-foreground: #1f2937;
-  --primary: #374151;
+  --popover-foreground: #475569;
+  --primary: #164e63;
   --primary-foreground: #ffffff;
-  --secondary: #6366f1;
+  --secondary: #d97706;
   --secondary-foreground: #ffffff;
-  --muted: #f8fafc;
-  --muted-foreground: #4b5563;
-  --accent: #6366f1;
+  --muted: #f0f4f8;
+  --muted-foreground: #475569;
+  --accent: #d97706;
   --accent-foreground: #ffffff;
-  --destructive: #ea580c;
+  --destructive: #be123c;
   --destructive-foreground: #ffffff;
-  --border: #e5e7eb;
-  --input: #f8fafc;
-  --ring: rgba(99, 102, 241, 0.5);
-  --chart-1: #6366f1;
-  --chart-2: #f97316;
-  --chart-3: #a16207;
-  --chart-4: #ea580c;
-  --chart-5: #4b5563;
-  --radius: 0.375rem;
-  --sidebar: #f8fafc;
-  --sidebar-foreground: #1f2937;
-  --sidebar-primary: #6366f1;
+  --border: #d1d5db;
+  --input: #f9fafb;
+  --ring: rgba(22, 78, 99, 0.5);
+  --chart-1: #4a5568;
+  --chart-2: #f6e05e;
+  --chart-3: #6b46c1;
+  --chart-4: #e53e3e;
+  --chart-5: #38a169;
+  --radius: 0.5rem;
+  --sidebar: #ecfeff;
+  --sidebar-foreground: #475569;
+  --sidebar-primary: #164e63;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #ea580c;
+  --sidebar-accent: #d97706;
   --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: #e5e7eb;
-  --sidebar-ring: rgba(99, 102, 241, 0.5);
+  --sidebar-border: #d1d5db;
+  --sidebar-ring: rgba(22, 78, 99, 0.5);
+
+  /* Added editor-specific design tokens for beautiful code editing experience */
+  --editor-background: #fefefe;
+  --editor-foreground: #374151;
+  --editor-line-highlight: #f0f9ff;
+  --editor-selection: rgba(22, 78, 99, 0.1);
+  --editor-cursor: #164e63;
+  --editor-gutter: #f8fafc;
+  --editor-gutter-foreground: #9ca3af;
+  --editor-active-line: #ecfeff;
+
+  /* Enhanced animation and transition tokens */
+  --transition-fast: 150ms ease-out;
+  --transition-normal: 250ms ease-out;
+  --transition-slow: 350ms ease-out;
+  --shadow-soft: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --shadow-medium: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-large: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+  /* Updated font mappings to use Geist and Manrope from design brief */
+  --font-geist: "Geist", sans-serif;
+  --font-manrope: "Manrope", serif;
+  --font-sans: var(--font-geist);
+  --font-serif: var(--font-manrope);
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 .dark {
+  /* Enhanced dark mode with sophisticated color palette */
   --background: #0f172a;
   --foreground: #f1f5f9;
   --card: #1e293b;
   --card-foreground: #f1f5f9;
   --popover: #1e293b;
   --popover-foreground: #f1f5f9;
-  --primary: #f1f5f9;
-  --primary-foreground: #0f172a;
-  --secondary: #6366f1;
+  --primary: #0891b2;
+  --primary-foreground: #ffffff;
+  --secondary: #f59e0b;
   --secondary-foreground: #ffffff;
   --muted: #334155;
   --muted-foreground: #94a3b8;
-  --accent: #6366f1;
+  --accent: #f59e0b;
   --accent-foreground: #ffffff;
-  --destructive: #ea580c;
+  --destructive: #dc2626;
   --destructive-foreground: #ffffff;
   --border: #334155;
   --input: #1e293b;
-  --ring: rgba(99, 102, 241, 0.5);
-  --chart-1: #6366f1;
-  --chart-2: #f97316;
-  --chart-3: #a16207;
-  --chart-4: #ea580c;
-  --chart-5: #94a3b8;
+  --ring: rgba(8, 145, 178, 0.5);
+  --chart-1: #0891b2;
+  --chart-2: #f59e0b;
+  --chart-3: #8b5cf6;
+  --chart-4: #ef4444;
+  --chart-5: #10b981;
   --sidebar: #1e293b;
   --sidebar-foreground: #f1f5f9;
-  --sidebar-primary: #6366f1;
+  --sidebar-primary: #0891b2;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #ea580c;
+  --sidebar-accent: #f59e0b;
   --sidebar-accent-foreground: #ffffff;
   --sidebar-border: #334155;
-  --sidebar-ring: rgba(99, 102, 241, 0.5);
+  --sidebar-ring: rgba(8, 145, 178, 0.5);
+
+  /* Dark mode editor tokens for professional coding experience */
+  --editor-background: #0f172a;
+  --editor-foreground: #e2e8f0;
+  --editor-line-highlight: #1e293b;
+  --editor-selection: rgba(8, 145, 178, 0.2);
+  --editor-cursor: #0891b2;
+  --editor-gutter: #1e293b;
+  --editor-gutter-foreground: #64748b;
+  --editor-active-line: #1e293b;
+
+  /* Enhanced shadows for dark mode depth */
+  --shadow-soft: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+  --shadow-medium: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  --shadow-large: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
 }
 
 @theme inline {
@@ -111,6 +153,22 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Added editor and animation tokens to Tailwind theme */
+  --color-editor-background: var(--editor-background);
+  --color-editor-foreground: var(--editor-foreground);
+  --color-editor-line-highlight: var(--editor-line-highlight);
+  --color-editor-selection: var(--editor-selection);
+  --color-editor-cursor: var(--editor-cursor);
+  --color-editor-gutter: var(--editor-gutter);
+  --color-editor-gutter-foreground: var(--editor-gutter-foreground);
+  --color-editor-active-line: var(--editor-active-line);
+  --transition-fast: var(--transition-fast);
+  --transition-normal: var(--transition-normal);
+  --transition-slow: var(--transition-slow);
+  --shadow-soft: var(--shadow-soft);
+  --shadow-medium: var(--shadow-medium);
+  --shadow-large: var(--shadow-large);
 }
 
 @layer base {
@@ -119,5 +177,95 @@
   }
   body {
     @apply bg-background text-foreground;
+    /* Added smooth transitions and improved typography */
+    transition: background-color var(--transition-normal), color var(--transition-normal);
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Enhanced scrollbar styling for better UX */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--muted));
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground) / 0.3);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.5);
+  }
+
+  /* Beautiful focus styles for accessibility */
+  .focus-visible-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
+  }
+}
+
+/* Added beautiful animation classes for enhanced UX */
+@layer utilities {
+  .animate-fade-in {
+    animation: fadeIn var(--transition-normal) ease-out;
+  }
+
+  .animate-slide-up {
+    animation: slideUp var(--transition-normal) ease-out;
+  }
+
+  .animate-scale-in {
+    animation: scaleIn var(--transition-fast) ease-out;
+  }
+
+  .transition-theme {
+    transition: background-color var(--transition-normal), border-color var(--transition-normal), color
+      var(--transition-normal);
+  }
+
+  .shadow-soft {
+    box-shadow: var(--shadow-soft);
+  }
+
+  .shadow-medium {
+    box-shadow: var(--shadow-medium);
+  }
+
+  .shadow-large {
+    box-shadow: var(--shadow-large);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }

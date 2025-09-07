@@ -1,17 +1,19 @@
+import type React from "react";
 import type { Metadata } from "next";
-import { Space_Grotesk, DM_Sans } from "next/font/google";
+import { Geist, Manrope } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from "@/components/theme/theme-provider";
 
-const spaceGrotesk = Space_Grotesk({
+const geist = Geist({
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-space-grotest",
+  variable: "--font-geist",
 });
 
-const dmSans = DM_Sans({
+const manrope = Manrope({
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-dm-sans",
+  variable: "--font-manrope",
 });
 
 export const metadata: Metadata = {
@@ -25,8 +27,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${spaceGrotesk.variable} ${dmSans.variable}`}>
-      <body className="font-sans antialiased">{children}</body>
+    <html
+      lang="en"
+      className={`${geist.variable} ${manrope.variable} antialiased`}
+    >
+      <body className="font-sans antialiased transition-theme">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange={false}
+        >
+          {children}
+        </ThemeProvider>
+      </body>
     </html>
   );
 }
