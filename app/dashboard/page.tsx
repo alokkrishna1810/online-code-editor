@@ -321,17 +321,52 @@ export default function DashboardPage() {
                 </div>
               </div>
             ) : filteredProjects.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredProjects.map((project) => (
-                  <ProjectCard
-                    key={project.id}
-                    project={project}
-                    onEdit={handleEditProject}
-                    onDelete={handleDeleteProject}
-                    onShare={handleShareProject}
-                  />
-                ))}
-              </div>
+              <>
+                <h2 className="text-xl font-semibold mb-4">
+                  Server-side Languages
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                  {filteredProjects
+                    .filter((project) =>
+                      ["cpp", "java", "python"].includes(project.language)
+                    )
+                    .map((project) => (
+                      <ProjectCard
+                        key={project.id}
+                        project={project}
+                        onEdit={handleEditProject}
+                        onDelete={handleDeleteProject}
+                        onShare={handleShareProject}
+                      />
+                    ))}
+                </div>
+
+                <h2 className="text-xl font-semibold mb-4">
+                  Client-side Languages
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {filteredProjects
+                    .filter((project) =>
+                      [
+                        "html",
+                        "react",
+                        "vue",
+                        "angular",
+                        "javascript",
+                        "typescript",
+                      ].includes(project.language)
+                    )
+                    .map((project) => (
+                      <ProjectCard
+                        key={project.id}
+                        project={project}
+                        onEdit={handleEditProject}
+                        onDelete={handleDeleteProject}
+                        onShare={handleShareProject}
+                      />
+                    ))}
+                </div>
+              </>
             ) : (
               <div className="text-center py-12">
                 <Code2 className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
