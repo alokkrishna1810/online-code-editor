@@ -1,104 +1,80 @@
 "use client";
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import {
-  Monitor,
-  Smartphone,
-  Tablet,
-  RotateCcw,
-  ExternalLink,
-} from "lucide-react";
-import { LivePreview } from "./live-preview";
-import type { useFileSystem } from "@/hooks/use-file-system";
+import { useEffect, useState, useCallback } from "react";
+import { useFileSystem } from "@/hooks/use-file-system";
+import { Loader2, ServerCrash } from "lucide-react";
 
 interface PreviewPaneProps {
   fileSystem: ReturnType<typeof useFileSystem>;
 }
 
 export function PreviewPane({ fileSystem }: PreviewPaneProps) {
-  const [previewMode, setPreviewMode] = useState<
-    "desktop" | "tablet" | "mobile"
-  >("desktop");
+  const { files, getFilesForPreview } = fileSystem; // Corrected: Use getFilesForPreview
+  const [previewHtml, setPreviewHtml] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const refreshPreview = () => {
-    // Force refresh by updating a key or triggering re-render
-    window.location.reload();
-  };
+  const generatePreviewHTML = useCallback(() => {
+    try {
+      // ✅ Use the correct function name here
+      const allFiles = getFilesForPreview();
+      const htmlFile = allFiles["index.html"];
+      const cssFile = allFiles["style.css"];
+      const jsFile = allFiles["script.js"];
 
-  const openInNewTab = () => {
-    // In a real implementation, this would open the preview in a new tab
-    // For now, we'll just show an alert
-    alert("Open in new tab functionality would be implemented here");
-  };
+      if (!htmlFile) {
+        return `<div style="color: red; font-family: sans-serif;">Error: index.html not found.</div>`;
+      }
+
+      // Inject CSS and JS into the HTML for the preview
+      return `
+        <html>
+          <head>
+            ${cssFile ? `<style>${cssFile}</style>` : ""}
+          </head>
+          <body>
+            ${htmlFile}
+            ${jsFile ? `<script>${jsFile}</script>` : ""}
+          </body>
+        </html>
+      `;
+    } catch (e) {
+      console.error("Error generating preview:", e);
+      setError("Failed to generate preview.");
+      return "";
+    }
+  }, [getFilesForPreview]);
+
+  useEffect(() => {
+    setIsLoading(true);
+    setError(null);
+    const html = generatePreviewHTML();
+    setPreviewHtml(html);
+    setIsLoading(false);
+  }, [files, generatePreviewHTML]);
 
   return (
-    <div className="h-full bg-card/30 backdrop-blur border-l flex flex-col">
-      {/* Preview Header */}
-      <div className="border-b bg-card/50 p-3">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="font-semibold text-sm font-space-grotesk">
-            Live Preview
-          </h3>
-
-          <div className="flex items-center space-x-1">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-6 w-6 p-0"
-              onClick={refreshPreview}
-              title="Refresh"
-            >
-              <RotateCcw className="h-3 w-3" />
-            </Button>
-
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-6 w-6 p-0"
-              onClick={openInNewTab}
-              title="Open in new tab"
-            >
-              <ExternalLink className="h-3 w-3" />
-            </Button>
-          </div>
+    <div className="h-full bg-white relative">
+      {isLoading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-white/80">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
-
-        {/* Device Toggle */}
-        <div className="flex items-center space-x-1">
-          <Button
-            variant={previewMode === "desktop" ? "secondary" : "ghost"}
-            size="sm"
-            onClick={() => setPreviewMode("desktop")}
-            title="Desktop view"
-          >
-            <Monitor className="h-4 w-4" />
-          </Button>
-
-          <Button
-            variant={previewMode === "tablet" ? "secondary" : "ghost"}
-            size="sm"
-            onClick={() => setPreviewMode("tablet")}
-            title="Tablet view"
-          >
-            <Tablet className="h-4 w-4" />
-          </Button>
-
-          <Button
-            variant={previewMode === "mobile" ? "secondary" : "ghost"}
-            size="sm"
-            onClick={() => setPreviewMode("mobile")}
-            title="Mobile view"
-          >
-            <Smartphone className="h-4 w-4" />
-          </Button>
+      )}
+      {error && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-red-500">
+          <ServerCrash className="h-10 w-10 mb-2" />
+          <p className="font-semibold">Preview Error</p>
+          <p className="text-sm">{error}</p>
         </div>
-      </div>
-
-      {/* Live Preview Content */}
-      <div className="flex-1 overflow-hidden">
-        <LivePreview fileSystem={fileSystem} previewMode={previewMode} />
-      </div>
+      )}
+      {!isLoading && !error && (
+        <iframe
+          srcDoc={previewHtml}
+          title="Live Preview"
+          sandbox="allow-scripts allow-same-origin"
+          className="w-full h-full border-0"
+        />
+      )}
     </div>
   );
 }

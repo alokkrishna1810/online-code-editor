@@ -8,13 +8,14 @@ import { useOthers } from "@liveblocks/react";
 
 interface CodeEditorProps {
   fileSystem: ReturnType<typeof useFileSystem>;
+  theme: string;
 }
 
-export function CodeEditor({ fileSystem }: CodeEditorProps) {
-  const { theme } = useTheme();
+export function CodeEditor({ fileSystem, theme }: CodeEditorProps) {
   const { activeFile, getFile, updateFileContent } = fileSystem;
 
   const others = useOthers();
+  // ✅ getFile correctly returns a plain snapshot object
   const activeFileObject = getFile(activeFile);
 
   if (!activeFileObject) {
@@ -40,7 +41,7 @@ export function CodeEditor({ fileSystem }: CodeEditorProps) {
         value={activeFileObject.content || ""}
         language={activeFileObject.language || "plaintext"}
         onChange={handleCodeChange}
-        theme={theme === "dark" ? "vs-dark" : "vs-light"}
+        theme={theme}
       />
     </div>
   );

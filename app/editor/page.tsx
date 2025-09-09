@@ -4,16 +4,17 @@ import Header from "@/components/header/header";
 import { EditorLayout } from "@/components/editor/editor-layout";
 import { RoomProvider } from "@liveblocks/react";
 import { LiveList, LiveObject } from "@liveblocks/client";
-import { FileSystemItem } from "@/liveblocks.config"; // Import the LiveObject type
+import { FileSystemItem, FileSystemItemObject } from "@/liveblocks.config";
 
-// Initial files must be created as LiveObjects to match the storage type
-const defaultFiles: FileSystemItem[] = [
-  new LiveObject({
-    type: "file",
-    name: "index.html",
-    path: "index.html",
-    language: "html",
-    content: `<!DOCTYPE html>
+// ✅ Create a function that returns new LiveObjects each time it's called
+const getInitialStorage = () => ({
+  files: new LiveList<FileSystemItem>([
+    new LiveObject<FileSystemItemObject>({
+      type: "file",
+      name: "index.html",
+      path: "index.html",
+      language: "html",
+      content: `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -26,27 +27,29 @@ const defaultFiles: FileSystemItem[] = [
     <script src="script.js"></script>
 </body>
 </html>`,
-  }),
-  new LiveObject({
-    type: "file",
-    name: "style.css",
-    path: "style.css",
-    language: "css",
-    content: `body { 
+    }),
+    new LiveObject<FileSystemItemObject>({
+      type: "file",
+      name: "style.css",
+      path: "style.css",
+      language: "css",
+      content: `body { 
   font-family: sans-serif; 
   background-color: #f4f4f9;
   color: #333;
   padding: 2rem;
 }`,
-  }),
-  new LiveObject({
-    type: "file",
-    name: "script.js",
-    path: "script.js",
-    language: "javascript",
-    content: `console.log('Hello from CodeCollab!');`,
-  }),
-];
+    }),
+    new LiveObject<FileSystemItemObject>({
+      type: "file",
+      name: "script.js",
+      path: "script.js",
+      language: "javascript",
+      content: `console.log('Hello from CodeCollab!');`,
+    }),
+  ]),
+});
+
 
 export default function EditorPage() {
   return (
@@ -61,9 +64,8 @@ export default function EditorPage() {
             color: "#3b82f6",
             currentFile: "index.html",
           }}
-          initialStorage={{
-            files: new LiveList(defaultFiles),
-          }}
+          // ✅ Call the function to get fresh initial storage on each render
+          initialStorage={getInitialStorage}
         >
           <EditorLayout />
         </RoomProvider>

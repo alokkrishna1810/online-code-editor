@@ -17,6 +17,7 @@ import {
 import { LanguageSelector } from "./language-selector";
 import { TemplateSelector } from "./template-selector";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
+import { ThemeSelector } from "./theme-selector"; // Import the new component
 
 interface EditorToolbarProps {
   sidebarCollapsed: boolean;
@@ -28,6 +29,8 @@ interface EditorToolbarProps {
   onStopExecution: () => void;
   isExecuting: boolean;
   canExecute: boolean;
+  theme: string; // Add theme prop
+  onThemeChange: (theme: string) => void; // Add theme change handler
 }
 
 export function EditorToolbar({
@@ -40,6 +43,8 @@ export function EditorToolbar({
   onStopExecution,
   isExecuting,
   canExecute,
+  theme,
+  onThemeChange,
 }: EditorToolbarProps) {
   return (
     <div className="border-b bg-card/20 backdrop-blur px-3 py-2">
@@ -63,20 +68,6 @@ export function EditorToolbar({
           </SignedOut>
 
           <div className="w-px h-4 bg-border mx-2" />
-
-          <Button variant="ghost" size="sm">
-            <Undo className="h-4 w-4" />
-          </Button>
-          <Button variant="ghost" size="sm">
-            <Redo className="h-4 w-4" />
-          </Button>
-          <div className="w-px h-4 bg-border mx-2" />
-          <Button variant="ghost" size="sm">
-            <Search className="h-4 w-4" />
-          </Button>
-          <Button variant="ghost" size="sm">
-            <Replace className="h-4 w-4" />
-          </Button>
         </div>
 
         <div className="flex items-center space-x-2">
@@ -84,8 +75,6 @@ export function EditorToolbar({
             currentLanguage={currentLanguage}
             onLanguageChange={onLanguageChange}
           />
-
-          <div className="w-px h-4 bg-border mx-2" />
 
           {canExecute && (
             <>
@@ -112,14 +101,11 @@ export function EditorToolbar({
             </>
           )}
 
+          {/* Add the theme selector here */}
+          <ThemeSelector currentTheme={theme} onThemeChange={onThemeChange} />
+
           <Button variant="ghost" size="sm">
             <Settings className="h-4 w-4" />
-          </Button>
-          <Button variant="ghost" size="sm">
-            <Command className="h-4 w-4" />
-          </Button>
-          <Button variant="ghost" size="sm">
-            <Maximize2 className="h-4 w-4" />
           </Button>
         </div>
       </div>

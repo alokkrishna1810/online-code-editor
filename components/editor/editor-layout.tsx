@@ -17,10 +17,14 @@ import { cn } from "@/lib/utils";
 export function EditorLayout() {
   const fileSystem = useFileSystem();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [theme, setTheme] = useState("custom-dark");
 
   const handleCollapse = () => {
     setSidebarCollapsed(!sidebarCollapsed);
   };
+
+  // ✅ activeFileObject is a plain snapshot object
+  const activeFileObject = fileSystem.getFile(fileSystem.activeFile);
 
   return (
     <div className="h-full flex flex-col bg-background">
@@ -49,18 +53,20 @@ export function EditorLayout() {
               <EditorToolbar
                 sidebarCollapsed={sidebarCollapsed}
                 onToggleSidebar={handleCollapse}
-                // These props need to be wired up with state if you need them
-                currentLanguage="javascript"
+                // ✅ Access the property directly: activeFileObject.language
+                currentLanguage={activeFileObject?.language || "plaintext"}
                 onLanguageChange={() => {}}
-                onCreateFromTemplate={() => {}}
+                onCreateFromTemplate={fileSystem.createFileFromTemplate}
                 onRunCode={() => {}}
                 onStopExecution={() => {}}
                 isExecuting={false}
                 canExecute={true}
+                theme={theme}
+                onThemeChange={setTheme}
               />
               <EditorTabs fileSystem={fileSystem} />
               <div className="flex-1">
-                <CodeEditor fileSystem={fileSystem} />
+                <CodeEditor fileSystem={fileSystem} theme={theme} />
               </div>
             </div>
           </ResizablePanel>

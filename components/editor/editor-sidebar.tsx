@@ -52,12 +52,14 @@ export function EditorSidebar({ onCollapse, fileSystem }: EditorSidebarProps) {
     });
   };
 
+  // ✅ Access properties directly on the snapshot object
   const filteredFiles = files
     ? files.filter((item) =>
         item.name.toLowerCase().includes(searchQuery.toLowerCase())
       )
     : [];
 
+  // ✅ The 'items' parameter is now correctly typed as a snapshot array
   const renderFileTree = (
     items: readonly FileSystemItemSnapshot[],
     level = 0
@@ -66,7 +68,7 @@ export function EditorSidebar({ onCollapse, fileSystem }: EditorSidebarProps) {
       return (
         <div key={item.path}>
           <FileContextMenu
-            item={item} // Pass the plain snapshot object
+            item={item} // ✅ Pass the plain snapshot object directly
             onCreateFile={createFile}
             onCreateFolder={createFolder}
             onRename={renameItem}
@@ -110,7 +112,7 @@ export function EditorSidebar({ onCollapse, fileSystem }: EditorSidebarProps) {
           {item.type === "folder" &&
             expandedFolders.has(item.path) &&
             item.children && (
-              // The children are already a plain array, so just recurse
+              // ✅ The children are already a plain array, so just recurse
               <div>{renderFileTree(item.children, level + 1)}</div>
             )}
         </div>
