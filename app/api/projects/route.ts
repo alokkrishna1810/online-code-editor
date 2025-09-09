@@ -4,10 +4,11 @@ import connectDB from "@/lib/mongodb";
 import Project from "@/models/Project";
 import { z } from "zod";
 import { File } from "@/lib/types";
- 
+import { errorHandler } from "@/app/api/middleware/errorHandler";
+
 export async function GET(request: NextRequest) {
   try {
-    const { userId } = auth();
+    const { userId } = await auth();
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -15,16 +16,12 @@ export async function GET(request: NextRequest) {
     await connectDB();
     const projects = await Project.find({
       $or: [{ owner: userId }, { collaborators: userId }],
-    })
-      .sort({ updatedAt: -1 });
+    }).sort({ updatedAt: -1 });
 
     return NextResponse.json({ projects });
   } catch (error) {
     console.error("Get projects error:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return errorHandler(error);
   }
 }
 
@@ -42,9 +39,24 @@ const createDefaultFiles = (language: string, projectName: string): File[] => {
       : 'console.log("Hello World!");\n\n// Add your JavaScript code here\ndocument.addEventListener("DOMContentLoaded", function() {\n    console.log("Page loaded!");\n});';
 
   return [
-    { name: "index.html", content: htmlContent, language: "html", path: "/index.html" },
-    { name: "style.css", content: cssContent, language: "css", path: "/style.css" },
-    { name: "script.js", content: jsContent, language: "javascript", path: "/script.js" },
+    {
+      name: "index.html",
+      content: htmlContent,
+      language: "html",
+      path: "/index.html",
+    },
+    {
+      name: "style.css",
+      content: cssContent,
+      language: "css",
+      path: "/style.css",
+    },
+    {
+      name: "script.js",
+      content: jsContent,
+      language: "javascript",
+      path: "/script.js",
+    },
   ];
 };
 
@@ -57,7 +69,7 @@ const createProjectSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
-    const { userId } = auth();
+    const { userId } = await auth(); // Corrected: Added await
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -66,7 +78,7 @@ export async function POST(request: NextRequest) {
     const validation = createProjectSchema.safeParse(body);
 
     if (!validation.success) {
-      return NextResponse.json({ error: "Invalid input", issues: validation.error.issues }, { status: 400 });
+      return errorHandler(validation.error);
     }
 
     const { name, description, language, template } = validation.data;
@@ -87,9 +99,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ project });
   } catch (error) {
     console.error("Create project error:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return errorHandler(error);
   }
 }
