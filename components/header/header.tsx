@@ -4,7 +4,7 @@ import { Button } from "../ui/button";
 import { Code2, Home, Code, BarChart3, Settings, Menu, X } from "lucide-react";
 import Link from "next/link";
 import { ThemeToggle } from "../theme/theme-toggle";
-import { SignedIn, SignedOut, SignInButton, UserButton, useUser } from "@clerk/nextjs";
+import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton, useUser } from "@clerk/nextjs";
 import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
@@ -16,8 +16,8 @@ export default function Header() {
 
   const handleNavigation = (href: string) => {
     if ((href === "/editor" || href === "/dashboard") && !isSignedIn) {
-      router.push("/auth/sign-in");
-    } else if ((href === "/auth/sign-in" || href === "/auth/sign-up") && isSignedIn) {
+      router.push("/sign-in");
+    } else if ((href === "/sign-in" || href === "/sign-up") && isSignedIn) {
       router.push("/dashboard");
     } else {
       router.push(href);
@@ -84,9 +84,12 @@ export default function Header() {
                   Sign in
                 </Button>
               </SignInButton>
-              <Button size="sm" onClick={() => handleNavigation("/auth/sign-up")}>
-                Get Started
-              </Button>
+              
+              <SignUpButton mode="modal">
+                <Button size="sm">
+                  Get Started
+                </Button>
+              </SignUpButton>
             </div>
           </SignedOut>
 

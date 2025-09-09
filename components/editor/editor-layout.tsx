@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState, useCallback } from "react";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -13,18 +13,50 @@ import { PreviewPane } from "./preview-pane";
 import { CodeEditor } from "./code-editor";
 import { useFileSystem } from "@/hooks/use-file-system";
 import { cn } from "@/lib/utils";
+import { ExecutionPanel } from "./execution-panel";
+import { OutputConsole, useConsole } from "./output-console";
+import { useCodeExecution } from "@/hooks/use-code-execution";
+import { useAuth } from "@clerk/nextjs";
 
 export function EditorLayout() {
   const fileSystem = useFileSystem();
+  const console = useConsole();
+  const { executeCode, isExecuting } = useCodeExecution();
+  const { isSignedIn } = useAuth();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [theme, setTheme] = useState("custom-dark");
+  const [theme, setTheme] = useState("dracula");
 
   const handleCollapse = () => {
     setSidebarCollapsed(!sidebarCollapsed);
   };
 
-  // ✅ activeFileObject is a plain snapshot object
   const activeFileObject = fileSystem.getFile(fileSystem.activeFile);
+
+  const isWebApp = useMemo(() => {
+    if (!fileSystem.files) {
+      return false;
+    }
+    return fileSystem.files.some((file) => file.name === "index.html");
+  }, [fileSystem.files]);
+
+  const handleExecute = useCallback(
+    async (code: string, input?: string) => {
+      if (!activeFileObject || !activeFileObject.language) {
+        console.error("No active file or language to execute.");
+        return Promise.resolve({
+          output: "Execution error: No active file.",
+          error: "Please select a file to execute.",
+          exitCode: 1,
+          executionTime: 0,
+        });
+      }
+      return executeCode(activeFileObject.language, code, input);
+    },
+    [activeFileObject, executeCode, console]
+  );
+
+  // ✅ Corrected: Coerce isSignedIn to a boolean to handle the undefined loading state.
+  const canExecuteCode = !isWebApp && !!isSignedIn;
 
   return (
     <div className="h-full flex flex-col bg-background">
@@ -53,14 +85,17 @@ export function EditorLayout() {
               <EditorToolbar
                 sidebarCollapsed={sidebarCollapsed}
                 onToggleSidebar={handleCollapse}
-                // ✅ Access the property directly: activeFileObject.language
                 currentLanguage={activeFileObject?.language || "plaintext"}
                 onLanguageChange={() => {}}
                 onCreateFromTemplate={fileSystem.createFileFromTemplate}
-                onRunCode={() => {}}
+                onRunCode={() => {
+                  if (activeFileObject) {
+                    handleExecute(activeFileObject.content || "");
+                  }
+                }}
                 onStopExecution={() => {}}
-                isExecuting={false}
-                canExecute={true}
+                isExecuting={isExecuting}
+                canExecute={canExecuteCode}
                 theme={theme}
                 onThemeChange={setTheme}
               />
@@ -72,7 +107,28 @@ export function EditorLayout() {
           </ResizablePanel>
           <ResizableHandle withHandle />
           <ResizablePanel defaultSize={40} minSize={25}>
-            <PreviewPane fileSystem={fileSystem} />
+            {isWebApp ? (
+              <PreviewPane fileSystem={fileSystem} />
+            ) : (
+              <ResizablePanelGroup direction="vertical">
+                <ResizablePanel defaultSize={60} minSize={30}>
+                  <ExecutionPanel
+                    language={activeFileObject?.language || ""}
+                    code={activeFileObject?.content || ""}
+                    onExecute={handleExecute}
+                    isExecuting={isExecuting}
+                    onExecutionStateChange={() => {}}
+                  />
+                </ResizablePanel>
+                <ResizableHandle withHandle />
+                <ResizablePanel defaultSize={40} minSize={20}>
+                  <OutputConsole
+                    messages={console.messages}
+                    onCommand={() => {}}
+                  />
+                </ResizablePanel>
+              </ResizablePanelGroup>
+            )}
           </ResizablePanel>
         </ResizablePanelGroup>
       </div>

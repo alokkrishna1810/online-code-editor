@@ -30,7 +30,7 @@ export default function Hero() {
           </SignedIn>
 
           <SignedOut>
-            <Link href="/auth/sign-in">
+            <Link href="/sign-in">
               <Button size="lg" className="text-lg px-8">
                 Start Coding Now
               </Button>

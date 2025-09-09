@@ -94,13 +94,12 @@ export function MonacoEditor({
   value,
   language,
   onChange,
-  theme = "custom-dark", // Default theme
+  theme = "custom-dark",
   options,
 }: MonacoEditorProps) {
+  // ✅ The onMount handler should only be used for one-time setup
   const handleEditorDidMount: OnMount = (editor, monaco) => {
     defineCustomThemes(monaco);
-    // Set the initial theme once themes are defined
-    monaco.editor.setTheme(theme);
   };
 
   return (
@@ -109,7 +108,8 @@ export function MonacoEditor({
       width="100%"
       language={language}
       value={value}
-      theme={theme} // Pass the theme prop here
+      // ✅ The theme prop declaratively handles all theme changes
+      theme={theme}
       onMount={handleEditorDidMount}
       onChange={onChange}
       loading={<Loader2 className="w-8 h-8 animate-spin" />}
