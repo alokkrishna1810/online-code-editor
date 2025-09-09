@@ -21,10 +21,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { FileText, Folder, Copy, Scissors, Trash2, Edit } from "lucide-react";
+import type { FileSystemItemSnapshot } from "@/liveblocks.config"; // Corrected: Import the snapshot type
 
 interface FileContextMenuProps {
   children: React.ReactNode;
-  item: any;
+  item: FileSystemItemSnapshot; // Corrected: Use the snapshot type
   onCreateFile: (parentPath: string, name: string) => void;
   onCreateFolder: (parentPath: string, name: string) => void;
   onRename: (path: string, newName: string) => void;

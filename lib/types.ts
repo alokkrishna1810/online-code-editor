@@ -1,4 +1,4 @@
-export type Language = 'html' | 'react' | 'vue' | 'angular';
+export type Language = "html" | "react" | "vue" | "angular";
 
 export interface Project {
   id: string;
@@ -17,6 +17,6 @@ export interface DashboardProject extends Project {
 export interface File {
   name: string;
   content: string;
-  language: 'html' | 'css' | 'javascript';
+  language: "html" | "css" | "javascript";
   path: string;
 }
