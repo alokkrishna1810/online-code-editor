@@ -18,6 +18,7 @@ import { useFileSystem } from "@/hooks/use-file-system";
 import { useCodeExecution } from "@/hooks/use-code-execution";
 import { useState, useCallback } from "react";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
+import { SignedIn, SignedOut } from "@clerk/nextjs";
 
 export function EditorLayout() {
   const fileSystem = useFileSystem();
@@ -99,57 +100,7 @@ export function EditorLayout() {
   );
 
   return (
-    <div className="h-screen flex flex-col bg-background">
-      {/* Header */}
-      <header className="border-b bg-card/50 backdrop-blur supports-[backdrop-filter]:bg-card/30">
-        <div className="flex items-center justify-between px-4 h-14">
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-2">
-              <Code2 className="h-6 w-6 text-primary" />
-
-              <span className="font-bold font-space-grotesk">CodeCollab</span>
-            </div>
-
-            <div className="text-sm text-muted-foreground">My Project</div>
-          </div>
-
-          <div className="flex items-center space-x-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="transition-theme hover:bg-accent/50"
-            >
-              <Users className="h-4 w-4 mr-2" />
-              Share
-            </Button>
-
-            <Button
-              variant="ghost"
-              size="sm"
-              className="transition-theme hover:bg-accent/50"
-            >
-              <Save className="h-4 w-4 mr-2" />
-              Save
-            </Button>
-            {canExecute && (
-              <Button
-                size="sm"
-                className="shadow-soft hover:shadow-medium transition-all"
-                onClick={handleRunCode}
-                disabled={isExecuting}
-              >
-                <Play className="h-4 w-4 mr-2" />
-                {isExecuting ? "Running..." : "Run"}
-              </Button>
-            )}
-            <ThemeToggle />
-            <Button variant="ghost" size="sm" className="transition-theme">
-              <Settings className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-      </header>
-
+    <div className="h-full flex flex-col bg-background">
       {/* Main Content */}
       <div className="flex-1 flex overflow-hidden">
         <ResizablePanelGroup direction="horizontal">

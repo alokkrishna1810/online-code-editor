@@ -11,8 +11,8 @@ export interface IProject extends Document {
   _id: string;
   name: string;
   description?: string;
-  owner: mongoose.Types.ObjectId;
-  collaborators: mongoose.Types.ObjectId[];
+  owner: string; // Clerk user ID
+  collaborators: string[]; // Clerk user IDs
   files: IFile[];
   isPublic: boolean;
   template: string;
@@ -44,14 +44,12 @@ const ProjectSchema = new Schema<IProject>(
       trim: true,
     },
     owner: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
+      type: String,
       required: true,
     },
     collaborators: [
       {
-        type: Schema.Types.ObjectId,
-        ref: "User",
+        type: String,
       },
     ],
     files: [FileSchema],

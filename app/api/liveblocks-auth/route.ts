@@ -1,6 +1,6 @@
 import { liveblocks } from "@/lib/liveblocks";
 import { NextRequest, NextResponse } from "next/server";
-import { verifyToken, findUserById } from "@/lib/auth";
+import { currentUser } from "@clerk/nextjs/server";
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,23 +13,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get token from Authorization header
-    const authHeader = request.headers.get("authorization");
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const token = authHeader.substring(7);
-    const decoded = verifyToken(token);
-
-    if (!decoded) {
-      return NextResponse.json({ error: "Invalid token" }, { status: 401 });
-    }
-
-    // Get user info from database
-    const user = await findUserById(decoded.userId);
+    // Get user info from Clerk
+    const user = await currentUser();
     if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const userInfo: {
@@ -39,15 +26,15 @@ export async function POST(request: NextRequest) {
       theme: "system" | "light" | "dark";
       role: "editor" | "owner" | "viewer";
     } = {
-      name: user.name,
-      email: user.email,
-      avatar: user.avatar || undefined,
-      theme: "system" as const, // Explicitly type as const to match union type
-      role: "editor" as const, // Explicitly type as const to match union type
+      name: user.firstName + " " + user.lastName || user.username || "User",
+      email: user.emailAddresses[0]?.emailAddress || "",
+      avatar: user.imageUrl || undefined,
+      theme: "system" as const,
+      role: "editor" as const,
     };
 
     // Create a session for the user
-    const session = liveblocks.prepareSession(decoded.userId, {
+    const session = liveblocks.prepareSession(user.id, {
       userInfo,
     });
 

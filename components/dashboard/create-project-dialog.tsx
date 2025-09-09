@@ -25,10 +25,21 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Code2, FileText, Palette, Zap } from "lucide-react";
 
+// It's a good practice to share type definitions.
+// This could be moved to a central `types.ts` file and imported in both files.
+interface Project {
+  id: string;
+  name: string;
+  description: string;
+  lastModified: string;
+  collaborators: number;
+  isPublic: boolean;
+  language: "html" | "react" | "vue" | "angular";
+}
 interface CreateProjectDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onCreateProject: (project: any) => void;
+  onCreateProject: (project: Project) => void;
 }
 
 export function CreateProjectDialog({
@@ -79,21 +90,15 @@ export function CreateProjectDialog({
     setIsLoading(true);
 
     try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        alert("Please log in first");
-        return;
-      }
-
       const response = await fetch("/api/projects", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           name: formData.name,
           description: formData.description,
+          language: formData.language,
           template: formData.template,
         }),
       });
@@ -107,7 +112,7 @@ export function CreateProjectDialog({
           lastModified: "Just now",
           collaborators: 1,
           isPublic: data.project.isPublic,
-          language: data.project.files[0]?.language || "html",
+          language: data.project.language || "html",
         };
 
         onCreateProject(newProject);

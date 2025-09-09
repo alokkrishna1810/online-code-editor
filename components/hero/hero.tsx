@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { Users, Zap, Shield } from "lucide-react";
+import { SignedIn, SignedOut } from "@clerk/nextjs";
 
 export default function Hero() {
   return (
@@ -20,21 +21,21 @@ export default function Hero() {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Link href="/dashboard" target="_blank">
-            <Button size="lg" className="text-lg px-8">
-              Start Coding Now
-            </Button>
-          </Link>
+          <SignedIn>
+            <Link href="/dashboard">
+              <Button size="lg" className="text-lg px-8">
+                Start Coding Now
+              </Button>
+            </Link>
+          </SignedIn>
 
-          <Link href="/editor">
-            <Button
-              size="lg"
-              variant="outline"
-              className="text-lg px-8 bg-transparent"
-            >
-              View Demo
-            </Button>
-          </Link>
+          <SignedOut>
+            <Link href="/auth/sign-in">
+              <Button size="lg" className="text-lg px-8">
+                Start Coding Now
+              </Button>
+            </Link>
+          </SignedOut>
         </div>
       </div>
 

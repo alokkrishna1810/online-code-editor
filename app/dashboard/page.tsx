@@ -2,98 +2,32 @@
 
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { ProjectCard } from "@/components/dashboard/project-card";
 import { CreateProjectDialog } from "@/components/dashboard/create-project-dialog";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Code2, Clock, Users, Star, Plus, LogOut, Loader2 } from "lucide-react";
-
-// Move mock data outside component to prevent recreation on every render
-const MOCK_PROJECTS = [
-  {
-    id: "1",
-    name: "Portfolio Website",
-    description:
-      "My personal portfolio showcasing web development projects and skills",
-    lastModified: "2 hours ago",
-    collaborators: 1,
-    isPublic: true,
-    language: "html" as const,
-  },
-  {
-    id: "2",
-    name: "E-commerce Landing",
-    description:
-      "Modern landing page for an e-commerce platform with interactive elements",
-    lastModified: "1 day ago",
-    collaborators: 3,
-    isPublic: false,
-    language: "react" as const,
-  },
-  {
-    id: "3",
-    name: "Dashboard UI",
-    description:
-      "Clean and responsive dashboard interface with data visualization components",
-    lastModified: "3 days ago",
-    collaborators: 2,
-    isPublic: true,
-    language: "vue" as const,
-  },
-  {
-    id: "4",
-    name: "Mobile App Prototype",
-    description:
-      "Interactive prototype for a mobile application with smooth animations",
-    lastModified: "1 week ago",
-    collaborators: 4,
-    isPublic: false,
-    language: "angular" as const,
-  },
-];
-
-// Type definitions for better type safety
-type Language = "html" | "react" | "vue" | "angular";
-
-interface Project {
-  id: string;
-  name: string;
-  description: string;
-  lastModified: string;
-  collaborators: number;
-  isPublic: boolean;
-  language: Language;
-}
-
-interface User {
-  name: string;
-  email: string;
-}
+import { Code2, Clock, Users, Star, Plus, Loader2 } from 'lucide-react';
+import { Project, DashboardProject } from '@/lib/types';
 
 export default function DashboardPage() {
   const router = useRouter();
-  const [projects, setProjects] = useState<Project[]>(MOCK_PROJECTS);
+  const [projects, setProjects] = useState<DashboardProject[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [activeTab, setActiveTab] = useState("all");
-  const [user, setUser] = useState<User | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const { user, isLoaded } = useUser();
   const [isProjectsLoading, setIsProjectsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Memoized fetchProjects function to prevent unnecessary re-creation
-  const fetchProjects = useCallback(async (token: string) => {
+  const fetchProjects = useCallback(async () => {
     setIsProjectsLoading(true);
     setError(null);
 
     try {
-      const response = await fetch("/api/projects", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch("/api/projects");
 
       if (response.ok) {
         const data = await response.json();
@@ -104,8 +38,9 @@ export default function DashboardPage() {
             description: p.description,
             lastModified: new Date(p.updatedAt).toLocaleDateString(),
             collaborators: p.collaborators.length + 1,
+            updatedAt: new Date(p.updatedAt),
             isPublic: p.isPublic,
-            language: p.files[0]?.language || "html",
+            language: p.language || "html",
           }))
         );
       } else {
@@ -120,31 +55,10 @@ export default function DashboardPage() {
   }, []);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    const userData = localStorage.getItem("user");
-
-    if (token && userData) {
-      try {
-        setUser(JSON.parse(userData));
-        setIsAuthenticated(true);
-        fetchProjects(token);
-      } catch (error) {
-        console.error("Error parsing user data:", error);
-        router.push("/auth");
-      }
-    } else {
-      router.push("/auth");
+    if (isLoaded && user) {
+      fetchProjects();
     }
-    setIsLoading(false);
-  }, [router, fetchProjects]);
-
-  const handleLogout = useCallback(() => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    setIsAuthenticated(false);
-    setUser(null);
-    router.push("/auth");
-  }, [router]);
+  }, [isLoaded, user, fetchProjects]);
 
   // Memoized filtered projects to prevent unnecessary recalculations
   const filteredProjects = useMemo(() => {
@@ -168,8 +82,9 @@ export default function DashboardPage() {
     const publicProjects = projects.filter((p) => p.isPublic).length;
     const recentActivity = projects.filter((p) => {
       // Consider projects modified within last 7 days as recent
-      const daysSinceModified = Math.floor(Math.random() * 30); // Mock calculation
-      return daysSinceModified <= 7;
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+      return p.updatedAt > sevenDaysAgo;
     }).length;
 
     return {
@@ -181,13 +96,18 @@ export default function DashboardPage() {
   }, [projects]);
 
   const handleCreateProject = useCallback((newProject: Project) => {
-    setProjects((prev) => [newProject, ...prev]);
+    const projectWithDate: DashboardProject = {
+      ...newProject,
+      updatedAt: new Date(),
+    };
+    setProjects((prev) => [projectWithDate, ...prev]);
   }, []);
 
   const handleEditProject = useCallback((project: Project) => {
     console.log("[v0] Edit project:", project);
     // Implementation for editing project
   }, []);
+
 
   const handleDeleteProject = useCallback((projectId: string) => {
     setProjects((prev) => prev.filter((p) => p.id !== projectId));
@@ -199,7 +119,7 @@ export default function DashboardPage() {
   }, []);
 
   // Show loading spinner while checking authentication
-  if (isLoading) {
+  if (!isLoaded) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
@@ -211,7 +131,7 @@ export default function DashboardPage() {
   }
 
   // Redirect if not authenticated
-  if (!isAuthenticated) {
+  if (!user) {
     return null;
   }
 
@@ -228,18 +148,13 @@ export default function DashboardPage() {
         <div className="mb-8 flex justify-between items-start">
           <div>
             <h1 className="text-3xl font-bold font-space-grotesk mb-2">
-              Welcome back, {user?.name || "User"}!
+              Welcome back, {user?.firstName || user?.username || "User"}!
             </h1>
 
             <p className="text-muted-foreground">
               Continue working on your projects or start something new.
             </p>
           </div>
-
-          <Button variant="outline" onClick={handleLogout}>
-            <LogOut className="h-4 w-4 mr-2" />
-            Logout
-          </Button>
         </div>
 
         {/* Quick Stats */}
@@ -309,64 +224,23 @@ export default function DashboardPage() {
                     Error loading projects
                   </h3>
                   <p className="text-sm text-muted-foreground mb-4">{error}</p>
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      const token = localStorage.getItem("token");
-                      if (token) fetchProjects(token);
-                    }}
-                  >
+                  <Button variant="outline" onClick={() => fetchProjects()}>
                     Try Again
                   </Button>
                 </div>
               </div>
             ) : filteredProjects.length > 0 ? (
-              <>
-                <h2 className="text-xl font-semibold mb-4">
-                  Server-side Languages
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                  {filteredProjects
-                    .filter((project) =>
-                      ["cpp", "java", "python"].includes(project.language)
-                    )
-                    .map((project) => (
-                      <ProjectCard
-                        key={project.id}
-                        project={project}
-                        onEdit={handleEditProject}
-                        onDelete={handleDeleteProject}
-                        onShare={handleShareProject}
-                      />
-                    ))}
-                </div>
-
-                <h2 className="text-xl font-semibold mb-4">
-                  Client-side Languages
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {filteredProjects
-                    .filter((project) =>
-                      [
-                        "html",
-                        "react",
-                        "vue",
-                        "angular",
-                        "javascript",
-                        "typescript",
-                      ].includes(project.language)
-                    )
-                    .map((project) => (
-                      <ProjectCard
-                        key={project.id}
-                        project={project}
-                        onEdit={handleEditProject}
-                        onDelete={handleDeleteProject}
-                        onShare={handleShareProject}
-                      />
-                    ))}
-                </div>
-              </>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredProjects.map((project) => (
+                  <ProjectCard
+                    key={project.id}
+                    project={project}
+                    onEdit={handleEditProject}
+                    onDelete={handleDeleteProject}
+                    onShare={handleShareProject}
+                  />
+                ))}
+              </div>
             ) : (
               <div className="text-center py-12">
                 <Code2 className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />

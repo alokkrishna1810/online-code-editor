@@ -4,6 +4,8 @@ import { Geist, Manrope } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { LiveblocksProviderWrapper } from "@/components/liveblocks/liveblocks-provider";
+import { ClerkProviderWrapper } from "@/components/clerk-provider";
+import Footer from "@/components/footer/footer";
 
 const geist = Geist({
   subsets: ["latin"],
@@ -32,15 +34,22 @@ export default function RootLayout({
       lang="en"
       className={`${geist.variable} ${manrope.variable} antialiased`}
     >
-      <body className="font-sans antialiased transition-theme">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange={false}
-        >
-          <LiveblocksProviderWrapper>{children}</LiveblocksProviderWrapper>
-        </ThemeProvider>
+      <body className="font-sans antialiased transition-theme min-h-screen flex flex-col">
+        <ClerkProviderWrapper>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange={false}
+          >
+            <LiveblocksProviderWrapper>
+              <div className="flex-1">
+                {children}
+              </div>
+              <Footer />
+            </LiveblocksProviderWrapper>
+          </ThemeProvider>
+        </ClerkProviderWrapper>
       </body>
     </html>
   );

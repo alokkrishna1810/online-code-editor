@@ -1,9 +1,10 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { PanelLeftOpen, Undo, Redo, Search, Replace, Command, Maximize2, Play, Square, Settings } from "lucide-react"
+import { PanelLeftOpen, Undo, Redo, Search, Replace, Command, Maximize2, Play, Square, Settings, Plus } from "lucide-react"
 import { LanguageSelector } from "./language-selector"
 import { TemplateSelector } from "./template-selector"
+import { SignedIn, SignedOut } from "@clerk/nextjs"
 
 interface EditorToolbarProps {
   sidebarCollapsed: boolean
@@ -38,7 +39,16 @@ export function EditorToolbar({
             </Button>
           )}
 
-          <TemplateSelector onCreateFile={onCreateFromTemplate} />
+          <SignedIn>
+            <TemplateSelector onCreateFile={onCreateFromTemplate} />
+          </SignedIn>
+
+          <SignedOut>
+            <Button variant="outline" size="sm" disabled>
+              <Plus className="h-4 w-4 mr-2" />
+              Templates (Sign in required)
+            </Button>
+          </SignedOut>
 
           <div className="w-px h-4 bg-border mx-2" />
 
